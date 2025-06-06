@@ -80,3 +80,20 @@ Several alternative approaches to running multiple processes in a single Docker 
 
 ---
 
+### How Supervisord Simplifies the Setup
+Supervisord addresses the challenges of other approaches by:
+- **Unified Process Control**: It starts both NGINX and the CloudWatch agent, monitors their status, and restarts them if they fail.
+- **Simple Configuration**: The `supervisord.conf` file is straightforward, requiring only a few lines to define each process.
+- **Log Management**: It redirects process logs to `/dev/stdout` and `/dev/stderr`, making them accessible via `docker logs`.
+- **Docker Compatibility**: It runs as the foreground process, keeping the container alive and handling Docker signals correctly.
+- **Lightweight**: Supervisord is installed via `pip3` and has minimal overhead, suitable for the `amazonlinux:2` base image.
+
+---
+
+### Context of the Setup
+Your trial test requires a single Docker container (using `amazonlinux:2`) to run NGINX and the CloudWatch agent, pushing NGINX access logs and disk metrics (`disk_used`, `disk_free`) for EBS volumes to CloudWatch. The provided setup uses:
+- **Dockerfile**: Installs NGINX (via EPEL), Supervisord (via `pip3`), and the CloudWatch agent, ensuring compatibility with `amazonlinux:2`.
+- **Supervisord Configuration**: Manages NGINX and the CloudWatch agent, ensuring both run reliably.
+- **CloudWatch Agent Configuration**: Uses `"resources": ["*"]` to automatically detect all mounted filesystems (including EBS volumes) and `${aws:InstanceId}` to uniquely identify metrics and logs across multiple instances.
+
+Supervisord was critical to making this work in a single container, as it eliminates the need for complex scripting or multiple containers, which would complicate deployment across multiple EC2 instances.
