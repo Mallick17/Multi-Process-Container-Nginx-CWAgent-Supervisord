@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/2aa80fda-a1bb-416b-90e3-02c3ef9b8a71)# Dockerized solution for running NGINX and the AWS CloudWatch Agent on Amazon Linux 2 using Supervisord.
+# Dockerized solution for running NGINX and the AWS CloudWatch Agent on Amazon Linux 2 using Supervisord.
 # Why are we using this approach 
 Using **Supervisord** to manage NGINX and the AWS CloudWatch agent in a single Docker container was chosen for its simplicity and reliability in handling multiple processes. Below, I’ll explain why Supervisord was used, why it works well for this scenario, and why other approaches were considered more complicated. I’ll also provide context for the provided Docker setup and address the specific needs of your trial test (running NGINX and CloudWatch agent in a single `amazonlinux:2`-based container to push NGINX access logs and disk metrics to CloudWatch).
 
