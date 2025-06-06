@@ -97,3 +97,149 @@ Your trial test requires a single Docker container (using `amazonlinux:2`) to ru
 - **CloudWatch Agent Configuration**: Uses `"resources": ["*"]` to automatically detect all mounted filesystems (including EBS volumes) and `${aws:InstanceId}` to uniquely identify metrics and logs across multiple instances.
 
 Supervisord was critical to making this work in a single container, as it eliminates the need for complex scripting or multiple containers, which would complicate deployment across multiple EC2 instances.
+
+---
+
+### Files (Recap for Reference)
+These are the same files provided,  included here for completeness to show how Supervisord integrates with the setup. They are ready and support automatic disk detection across multiple instances.
+
+#### 1. Dockerfile
+Installs dependencies and sets up Supervisord.
+
+```
+FROM amazonlinux:2
+
+# Enable EPEL repository and install necessary packages
+RUN amazon-linux-extras install epel -y && \
+    yum update -y && \
+    yum install -y nginx python3-pip amazon-cloudwatch-agent && \
+    yum clean all && \
+    rm -rf /var/cache/yum
+
+# Install Supervisord using pip3
+RUN pip3 install supervisor
+
+# Copy Supervisord configuration file
+COPY supervisord.conf /etc/supervisord.conf
+
+# Copy CloudWatch agent configuration file
+COPY config.json /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+
+# Ensure NGINX log directory permissions
+RUN chmod -R 644 /var/log/nginx
+
+# Expose NGINX port
+EXPOSE 80
+
+# Set the command to run Supervisord
+CMD ["/usr/local/bin/supervisord", "-n"]
+```
+
+#### 2. Supervisord Configuration
+Manages NGINX and the CloudWatch agent, ensuring both run concurrently.
+
+```
+[supervisord]
+nodaemon=true
+
+[program:nginx]
+command=nginx -g 'daemon off;'
+autostart=true
+autorestart=true
+stdout_logfile=/dev/stdout
+stderr_logfile=/dev/stderr
+
+[program:cloudwatch-agent]
+command=/opt/aws/amazon-cloudwatch-agent/bin/start-amazon-cloudwatch-agent
+autostart=true
+autorestart=true
+stdout_logfile=/dev/stdout
+stderr_logfile=/dev/stderr
+```
+
+#### 3. CloudWatch Agent Configuration
+Uses `"resources": ["*"]` to monitor all disks and `${aws:InstanceId}` for unique identification.
+
+```json
+{
+   "metrics": {
+      "metrics_collected": {
+         "disk": {
+            "measurement": [
+               "disk_used",
+               "disk_free"
+            ],
+            "metrics_collection_interval": 10,
+            "resources": [
+               "*"
+            ],
+            "unit": "Megabytes"
+         }
+      },
+      "append_dimensions": {
+        "ContainerName": "nginx-cloudwatch-agent-container-${aws:InstanceId}",
+        "InstanceId": "${aws:InstanceId}"
+      }
+   },
+   "logs": {
+      "logs_collected": {
+         "files": {
+            "collect_list": [
+               {
+                  "file_path": "/var/log/nginx/access.log",
+                  "log_group_name": "NginxLogGroup-mallick",
+                  "log_stream_name": "mallick-nginxagent-${aws:InstanceId}/access.log",
+                  "timestamp_format": "[%d/%b/%Y:%H:%M:%S %z]"
+               }
+            ]
+         }
+      }
+   }
+}
+```
+
+---
+
+### Instructions (Recap)
+1. **Prepare Files**:
+   - Create a directory (e.g., `super-nginx-watch`) on each EC2 instance.
+   - Save the `Dockerfile`, `supervisord.conf`, and `config.json` above.
+2. **Ensure Disk Space**:
+   - Check: `df -h /` (need ~500 MB).
+   - Free space: `docker system prune`, `sudo rm -rf /tmp/*`.
+   - Increase EC2 root volume if needed: `sudo growpart /dev/nvme0n1 1`, `sudo resize2fs /dev/nvme0n1p1`.
+3. **Set Up IAM Role**:
+   - Attach an IAM role with `logs:*`, `cloudwatch:PutMetricData`, and `ec2:DescribeInstances` permissions (or use `CloudWatchAgentServerPolicy` with `ec2:DescribeInstances` added).
+4. **Build Image**:
+   ```bash
+   docker build -t nginx-cloudwatch-agent .
+   ```
+5. **Run Containers**:
+   - List EBS mount points:
+     ```bash
+     df -h | grep /mnt | awk '{print $6}' | while read -r mount; do echo "-v $mount:$mount"; done
+     ```
+   - Run with IAM role:
+     ```bash
+     docker run -d \
+       -v /mnt/ebs1:/mnt/ebs1 \
+       -v /mnt/ebs2:/mnt/ebs2 \
+       -p 80:80 \
+       --name nginx-container nginx-cloudwatch-agent
+     ```
+     Adjust `-v` flags for your mount points.
+6. **Verify in CloudWatch**:
+   - Generate logs: `curl http://localhost`.
+   - Check logs in `NginxLogGroup-mallick` under streams like `mallick-nginxagent-i-1234567890abcdef0/access.log`.
+   - Check metrics in `CWAgent` namespace, filtered by `InstanceId` or `ContainerName`, for `disk_used` and `disk_free` in MB.
+
+---
+
+### Why Supervisord Was Necessary
+Without Supervisord, managing NGINX and the CloudWatch agent in a single container would require complex scripting or multiple containers, which would:
+- Increase setup complexity (e.g., custom scripts for process monitoring).
+- Risk process failures without automatic restarts.
+- Complicate log aggregation and debugging.
+- Violate the single-container requirement for your trial test.
+
+Supervisord’s simplicity, reliability, and compatibility made it the ideal choice for your use case, ensuring a robust and maintainable solution for monitoring NGINX logs and EBS disk metrics across multiple EC2 instances.
