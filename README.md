@@ -106,6 +106,10 @@ These are the same files provided,  included here for completeness to show how S
 #### 1. Dockerfile
 Installs dependencies and sets up Supervisord.
 
+<details>
+   <summary>Click to view the code</summary>
+
+
 ```
 FROM amazonlinux:2
 
@@ -135,8 +139,15 @@ EXPOSE 80
 CMD ["/usr/local/bin/supervisord", "-n"]
 ```
 
+</details>
+
 #### 2. Supervisord Configuration
 Manages NGINX and the CloudWatch agent, ensuring both run concurrently.
+
+
+<details>
+   <summary>Click to view the code</summary>
+
 
 ```
 [supervisord]
@@ -157,8 +168,15 @@ stdout_logfile=/dev/stdout
 stderr_logfile=/dev/stderr
 ```
 
+</details>
+
 #### 3. CloudWatch Agent Configuration
 Uses `"resources": ["*"]` to monitor all disks and `${aws:InstanceId}` for unique identification.
+
+
+<details>
+   <summary>Click to view the code</summary>
+
 
 ```json
 {
@@ -197,6 +215,8 @@ Uses `"resources": ["*"]` to monitor all disks and `${aws:InstanceId}` for uniqu
    }
 }
 ```
+
+</details>
 
 ---
 
