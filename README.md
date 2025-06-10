@@ -283,6 +283,23 @@ Supervisord’s simplicity, reliability, and compatibility made it the ideal cho
 ---
 
 # Different Versions/Improvement of Deployment
+## Folder name which is present in this repo (_CWAgent-V1_)
+Follow the same execution steps and File Structure. Check below to view the images for the cloudwatch based on the files and I have mentioned the Folder name here **_CWAgent-V1_** which is present in this repo.
+
+<details>
+   <summary>Click to view the changes happened in the CloudWatch based on the scripts and Configurations</summary>
+
+---
+
+
+
+---
+   
+</details>
+
+---
+
+# Different Versions/Improvement of Deployment
 ## Folder name which is present in this repo (_CWAgent-V2_)
 Follow the same execution steps and File Structure. Check below to view the images for the cloudwatch based on the files and I have mentioned the Folder name here **_CWAgent-V2_** which is present in this repo.
 
