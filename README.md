@@ -231,6 +231,10 @@ Uses `"resources": ["*"]` to monitor all disks and `${aws:InstanceId}` for uniqu
 ---
 
 ### Instructions (Recap)
+
+<details>
+   <summary>Execution Commands</summary>
+   
 1. **Prepare Files**:
    - Create a directory (e.g., `super-nginx-watch`) on each EC2 instance.
    - Save the `Dockerfile`, `supervisord.conf`, and `config.json` above.
@@ -262,6 +266,8 @@ Uses `"resources": ["*"]` to monitor all disks and `${aws:InstanceId}` for uniqu
    - Generate logs: `curl http://localhost`.
    - Check logs in `NginxLogGroup-mallick` under streams like `mallick-nginxagent-i-1234567890abcdef0/access.log`.
    - Check metrics in `CWAgent` namespace, filtered by `InstanceId` or `ContainerName`, for `disk_used` and `disk_free` in MB.
+
+</details>
 
 ---
 
