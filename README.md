@@ -7,6 +7,9 @@ Using **Supervisord** to manage NGINX and the AWS CloudWatch agent in a single D
 ### Why Supervisord Was Used
 Docker containers are designed to run a single foreground process by default. When you need to run multiple processes (e.g., NGINX and the CloudWatch agent) in a single container, you need a process manager to start, monitor, and keep both processes running. Supervisord was chosen for the following reasons:
 
+<details>
+   <summary>Click to view Detailed Explaination</summary>
+
 1. **Simple Process Management**:
    - Supervisord is a lightweight process control system that can start, stop, and monitor multiple processes, ensuring they run concurrently and restart if they fail.
    - It allows you to define NGINX and the CloudWatch agent as separate programs in a single configuration file (`supervisord.conf`), making it easy to manage both in one container.
@@ -27,6 +30,8 @@ Docker containers are designed to run a single foreground process by default. Wh
    - Supervisord automatically restarts processes if they crash (`autorestart=true`), ensuring NGINX and the CloudWatch agent remain operational.
    - It handles process dependencies and logging, reducing the risk of one process failing and causing the container to exit.
 
+</details>
+
 ---
 
 ### Why Supervisord Works Well
@@ -40,6 +45,9 @@ Supervisord is particularly effective for your scenario because:
 
 ### Why Other Approaches Were Complicated
 Several alternative approaches to running multiple processes in a single Docker container were considered but deemed more complicated or less suitable for your trial test:
+
+<details>
+   <summary>Click to view Detailed Explaination</summary>
 
 1. **Custom Shell Script**:
    - **Approach**: Use a shell script as the container’s entrypoint to start NGINX and the CloudWatch agent (e.g., `#!/bin/bash\nnginx -g "daemon off;" &\n/opt/aws/amazon-cloudwatch-agent/bin/start-amazon-cloudwatch-agent`).
@@ -77,6 +85,8 @@ Several alternative approaches to running multiple processes in a single Docker 
      - **Not Docker-Friendly**: `systemd` is designed for full OS environments and requires special container configurations (e.g., `--privileged`, custom volumes), which deviate from Docker best practices.
      - **Resource Heavy**: `systemd` is overkill for a simple trial test, consuming more resources than Supervisord.
      - **Setup Complexity**: Configuring `systemd` in a container is complex and error-prone compared to Supervisord’s lightweight INI configuration.
+
+</details>
 
 ---
 
