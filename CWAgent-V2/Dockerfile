@@ -23,3 +23,4 @@ RUN chmod -R 644 /var/log/nginx
 EXPOSE 80
 
 # Set the command to run Supervisord
+CMD ["/usr/local/bin/supervisord", "-n"]
