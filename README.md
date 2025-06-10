@@ -279,3 +279,39 @@ Without Supervisord, managing NGINX and the CloudWatch agent in a single contain
 - Violate the single-container requirement for your trial test.
 
 Supervisord’s simplicity, reliability, and compatibility made it the ideal choice for your use case, ensuring a robust and maintainable solution for monitoring NGINX logs and EBS disk metrics across multiple EC2 instances.
+
+---
+
+# Different Versions/Improvement of Deployment
+## Folder name which is present in this repo (_CWAgent-V2_)
+Follow the same execution steps and File Structure. Check below to view the images for the cloudwatch based on the files and I have mentioned the Folder name here **_CWAgent-V2_** which is present in this repo.
+
+<details>
+   <summary>Click to view the changes happened in the CloudWatch based on the scripts and Configurations</summary>
+
+---
+
+![image](https://github.com/user-attachments/assets/569f7aca-9f4b-4cd6-9aef-eb7d19cd65e9)
+
+---
+   
+</details>
+
+---
+
+# Different Versions/Improvement of Deployment
+## Folder name which is present in this repo (_CWAgent-V3_)
+Follow the same execution steps and File Structure. Check below to view the images for the cloudwatch based on the files and I have mentioned the Folder name here **_CWAgent-V3_** which is present in this repo.
+
+<details>
+   <summary>Click to view the changes happened in the CloudWatch based on the scripts and Configurations</summary>
+
+---
+
+![image](https://github.com/user-attachments/assets/8f95d759-1d01-4072-93d4-93934c8f2ade)
+
+---
+   
+</details>
+
+---
