@@ -91,4 +91,50 @@
   }
 }
 
+// Succesfull Script Part-1 (Manually Provided Datas)
+{
+  "metrics": {
+    "namespace": "CWAgent/DiskSpaceTri",
+    "append_dimensions": {
+      "InstanceId": "${aws:InstanceId}",
+      "InstanceType": "${aws:InstanceType}"
+    },
+    "aggregation_dimensions": [
+      ["InstanceId"],
+      ["InstanceType"]
+    ],
+    "metrics_collected": {
+      "disk": {
+        "measurement": [
+          "disk_used",
+          "disk_free"
+        ],
+        "metrics_collection_interval": 30,
+        "resources": [
+          "/"
+        ],
+        "unit": "Megabytes",
+        "append_dimensions": {
+          "ECSServiceName": "AnalyticsWorker",
+          "date": "2025-06-11"
+        }
+      }
+    }
+  },
+  "logs": {
+    "logs_collected": {
+      "files": {
+        "collect_list": [
+          {
+            "file_path": "/var/log/nginx/access.log",
+            "log_group_name": "NginxLogGroup-mallick",
+            "log_stream_name": "mallick-nginxagent-mallow/access.log",
+            "timestamp_format": "[%d/%b/%Y:%H:%M:%S %z]"
+          }
+        ]
+      }
+    }
+  }
+}
+
 //
