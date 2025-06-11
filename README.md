@@ -332,3 +332,20 @@ Follow the same execution steps and File Structure. Check below to view the imag
 </details>
 
 ---
+
+# Different Versions/Improvement of Deployment
+## Folder name which is present in this repo (_CWAgent-V4_)
+Follow the same execution steps and File Structure. Check below to view the images for the cloudwatch based on the files and I have mentioned the Folder name here **_CWAgent-V4_** which is present in this repo.
+
+<details>
+   <summary>Click to view the changes happened in the CloudWatch based on the scripts and Configurations</summary>
+
+---
+
+![image](https://github.com/user-attachments/assets/80ff5093-fe82-4993-a0ff-d0a21110d831)
+
+---
+
+</details>
+
+---
