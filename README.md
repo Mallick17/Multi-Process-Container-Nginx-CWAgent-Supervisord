@@ -349,3 +349,27 @@ Follow the same execution steps and File Structure. Check below to view the imag
 </details>
 
 ---
+
+# Different Versions/Improvement of Deployment
+- We are running multiple instances and using the same configuration file and checking the metrices through console, the difference between all the versions and this version is
+  - We are combining both the instances disk space used and disk space free in single metrices using **_aggregation_dimension_**
+## Folder name which is present in this repo (_CWAgent-V5_)
+Follow the same execution steps and File Structure. 
+- Copy and paste the files in 2 or 3 instances.
+- Follow the execution steps as mentioned in all the instances.
+- Refresh the webpage and Check the Cloudwatch Console(Log Groups and Metrics) for the changes happened through CloudWatch Agent.
+
+Check below to view the images for the cloudwatch based on the files and I have mentioned the Folder name here **_CWAgent-V5_** which is present in this repo.
+
+<details>
+   <summary>Click to view the changes happened in the CloudWatch based on the scripts and Configurations</summary>
+
+---
+
+![image](https://github.com/user-attachments/assets/2928cf9b-500f-4a53-8562-0f712cc82740)
+
+---
+
+</details>
+
+---
