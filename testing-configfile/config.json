@@ -1,0 +1,44 @@
+// Script
+
+{
+  "metrics": {
+    "namespace": "CWAgent/NginxContainerMetricsMallow",
+    "aggregation_dimensions": [
+      ["InstanceId", "InstanceType"],
+      []
+    ],
+    "metrics_collected": {
+      "collectd": {},
+      "disk": {
+        "measurement": [
+          "disk_used",
+          "disk_free"
+        ],
+        "metrics_collection_interval": 30,
+        "resources": [
+          "/"
+        ]
+      }
+    },
+    "append_dimensions": {
+      "InstanceId": "${aws:InstanceId}",
+      "InstanceType": "${aws:InstanceType}",
+      "test": "NginxCWAgent",
+      "date": "2025-06-11"
+    }
+  },
+  "logs": {
+    "logs_collected": {
+      "files": {
+        "collect_list": [
+          {
+            "file_path": "/var/log/nginx/access.log",
+            "log_group_name": "NginxLogGroup-mallick",
+            "log_stream_name": "mallick-nginxagent-mallow/access.log",
+            "timestamp_format": "[%d/%b/%Y:%H:%M:%S %z]"
+          }
+        ]
+      }
+    }
+  }
+}
