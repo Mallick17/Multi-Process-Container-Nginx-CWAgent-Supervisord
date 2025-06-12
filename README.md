@@ -443,6 +443,11 @@ Create or update the following JSON config file and place it in your ECS contain
 
 ## 🚀 Applying the Configuration
 
+Save the configuration file in cloudwatch agent configuration setup, or reffer the Dockerfile where the copy command is mentioned.
+
+<details>
+   <summary>If the changes are made in Instances</summary>
+   
 1. **Save the configuration** to a file like `/opt/aws/amazon-cloudwatch-agent/etc/cloudwatch-config.json`.
 
 2. **Validate and apply it using the agent:**
