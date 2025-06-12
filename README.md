@@ -1,6 +1,6 @@
 # Dockerized solution for running NGINX and the AWS CloudWatch Agent on Amazon Linux 2 using Supervisord.
 # Why are we using this approach 
-Using **Supervisord** to manage NGINX and the AWS CloudWatch agent in a single Docker container was chosen for its simplicity and reliability in handling multiple processes. Below, I’ll explain why Supervisord was used, why it works well for this scenario, and why other approaches were considered more complicated. I’ll also provide context for the provided Docker setup and address the specific needs of your trial test (running NGINX and CloudWatch agent in a single `amazonlinux:2`-based container to push NGINX access logs and disk metrics to CloudWatch).
+Using **Supervisord** to manage NGINX and the AWS CloudWatch agent in a single Docker container was chosen for its simplicity and reliability in handling multiple processes. Below, I’ll explain why Supervisord was used, why it works well for this scenario, and why other approaches were considered more complicated. I’ll also provide context for the provided Docker setup and address the specific needs of your trial test (running NGINX and CloudWatch agent in a single `amazonlinux:2`-based container to push NGINX access logs and disk metrics  to CloudWatch).
 
 ---
 
@@ -38,7 +38,7 @@ Docker containers are designed to run a single foreground process by default. Wh
 Supervisord is particularly effective for your scenario because:
 - **Single Container Requirement**: Your trial test requires running NGINX and the CloudWatch agent in one container. Supervisord elegantly manages both processes without requiring separate containers or complex orchestration.
 - **NGINX and CloudWatch Agent Compatibility**: NGINX needs to run with `daemon off;` to stay in the foreground, and the CloudWatch agent runs as a long-lived process. Supervisord handles both seamlessly.
-- **Log and Metric Collection**: Supervisord ensures both processes run continuously, allowing the CloudWatch agent to collect NGINX access logs (`/var/log/nginx/access.log`) and disk metrics (`disk_used`, `disk_free`) for EBS volumes, pushing them to CloudWatch without interruption.
+- **Log and Metric Collection**: Supervisord ensures both processes run continuously, allowing the CloudWatch agent to collect NGINX access logs (`/var/log/nginx/access.log`) and disk metrics  (`disk_used`, `disk_free`) for EBS volumes, pushing them to CloudWatch without interruption.
 - **Scalability Across Instances**: The Supervisord-based setup is portable across multiple EC2 instances, as it doesn’t rely on instance-specific configurations beyond the `config.json` file, which uses a universal wildcard (`"resources": ["*"]`) for disk monitoring.
 
 ---
@@ -65,7 +65,7 @@ Several alternative approaches to running multiple processes in a single Docker 
      - **Setup Overhead**: Installing and configuring `tini` or `dumb-init` adds complexity without providing the full process management capabilities needed.
 
 3. **Multiple Containers**:
-   - **Approach**: Run NGINX and the CloudWatch agent in separate containers, using Docker Compose or networking to share logs and metrics.
+   - **Approach**: Run NGINX and the CloudWatch agent in separate containers, using Docker Compose or networking to share logs and metrics .
    - **Complications**:
      - **Violates Single Container Requirement**: Your trial test explicitly requires a single container, making this approach unsuitable.
      - **Increased Complexity**: Managing multiple containers requires orchestration (e.g., Docker Compose, ECS), shared volumes for logs, and network configuration, which is overkill for a trial test.
@@ -101,10 +101,10 @@ Supervisord addresses the challenges of other approaches by:
 ---
 
 ### Context of the Setup
-Your trial test requires a single Docker container (using `amazonlinux:2`) to run NGINX and the CloudWatch agent, pushing NGINX access logs and disk metrics (`disk_used`, `disk_free`) for EBS volumes to CloudWatch. The provided setup uses:
+Your trial test requires a single Docker container (using `amazonlinux:2`) to run NGINX and the CloudWatch agent, pushing NGINX access logs and disk metrics  (`disk_used`, `disk_free`) for EBS volumes to CloudWatch. The provided setup uses:
 - **Dockerfile**: Installs NGINX (via EPEL), Supervisord (via `pip3`), and the CloudWatch agent, ensuring compatibility with `amazonlinux:2`.
 - **Supervisord Configuration**: Manages NGINX and the CloudWatch agent, ensuring both run reliably.
-- **CloudWatch Agent Configuration**: Uses `"resources": ["*"]` to automatically detect all mounted filesystems (including EBS volumes) and `${aws:InstanceId}` to uniquely identify metrics and logs across multiple instances.
+- **CloudWatch Agent Configuration**: Uses `"resources": ["*"]` to automatically detect all mounted filesystems (including EBS volumes) and `${aws:InstanceId}` to uniquely identify metrics  and logs across multiple instances.
 
 Supervisord was critical to making this work in a single container, as it eliminates the need for complex scripting or multiple containers, which would complicate deployment across multiple EC2 instances.
 
@@ -190,14 +190,14 @@ Uses `"resources": ["*"]` to monitor all disks and `${aws:InstanceId}` for uniqu
 
 ```json
 {
-   "metrics": {
-      "metrics_collected": {
+   "metrics ": {
+      "metrics _collected": {
          "disk": {
             "measurement": [
                "disk_used",
                "disk_free"
             ],
-            "metrics_collection_interval": 10,
+            "metrics _collection_interval": 10,
             "resources": [
                "*"
             ],
@@ -265,7 +265,7 @@ Uses `"resources": ["*"]` to monitor all disks and `${aws:InstanceId}` for uniqu
 6. **Verify in CloudWatch**:
    - Generate logs: `curl http://localhost`.
    - Check logs in `NginxLogGroup-mallick` under streams like `mallick-nginxagent-i-1234567890abcdef0/access.log`.
-   - Check metrics in `CWAgent` namespace, filtered by `InstanceId` or `ContainerName`, for `disk_used` and `disk_free` in MB.
+   - Check metrics  in `CWAgent` namespace, filtered by `InstanceId` or `ContainerName`, for `disk_used` and `disk_free` in MB.
 
 </details>
 
@@ -278,7 +278,7 @@ Without Supervisord, managing NGINX and the CloudWatch agent in a single contain
 - Complicate log aggregation and debugging.
 - Violate the single-container requirement for your trial test.
 
-Supervisord’s simplicity, reliability, and compatibility made it the ideal choice for your use case, ensuring a robust and maintainable solution for monitoring NGINX logs and EBS disk metrics across multiple EC2 instances.
+Supervisord’s simplicity, reliability, and compatibility made it the ideal choice for your use case, ensuring a robust and maintainable solution for monitoring NGINX logs and EBS disk metrics  across multiple EC2 instances.
 
 ---
 
@@ -350,26 +350,26 @@ Follow the same execution steps and File Structure. Check below to view the imag
 
 ---
 
-# 📊 CloudWatch Agent Configuration for ECS Metrics Aggregation (_CWAgent-V5_)
-- This guide explains how to configure the **Amazon CloudWatch Agent** to collect disk usage metrics (e.g., `disk_free`, `disk_used`) from ECS containers **and group them by service name only**, such as `AnalyticsWorker`.
-- By default, metrics are pushed with dimensions like `host`, `fstype`, and `device`, which makes it difficult to aggregate across instances. This setup removes those extra dimensions and ensures a **clean, single-line view per service** in CloudWatch.
+# 📊 CloudWatch Agent Configuration for ECS Metrics  Aggregation (_CWAgent-V5_)
+- This guide explains how to configure the **Amazon CloudWatch Agent** to collect disk usage metrics  (e.g., `disk_free`, `disk_used`) from ECS containers **and group them by service name only**, such as `AnalyticsWorker`.
+- By default, metrics  are pushed with dimensions like `host`, `fstype`, and `device`, which makes it difficult to aggregate across instances. This setup removes those extra dimensions and ensures a **clean, single-line view per service** in CloudWatch.
 
 ## Different Versions/Improvement of Deployment
-- We are running multiple instances and using the same configuration file and checking the metrices through console, the difference between all the versions and this version is
-  - We are combining both the instances disk space used and disk space free in single metrices using **_aggregation_dimension_**
+- We are running multiple instances and using the same configuration file and checking the metrics   through console, the difference between all the versions and this version is
+  - We are combining both the instances disk space used and disk space free in single metrics   using **_aggregation_dimension_**
 ## Folder name which is present in this repo (_CWAgent-V5_)
 Follow the same execution steps and File Structure. 
-- Copy and paste the files in 2 or 3 instances.
+- Copy and paste the files in 2 - 3 instances or containers to collect metrics .
 - Follow the execution steps as mentioned in all the instances.
-- Refresh the webpage and Check the Cloudwatch Console(Log Groups and Metrics) for the changes happened through CloudWatch Agent.
+- Refresh the webpage and Check the Cloudwatch Console(Log Groups and metrics ) for the changes happened through CloudWatch Agent.
 
-Here is a complete Markdown documentation suitable for your `README.md`, explaining **why** and **how** to configure the CloudWatch Agent to group metrics by service name only (like `AnalyticsWorker`), avoiding clutter from individual container `host`, `fstype`, or `device` labels.
+Here is a complete Markdown documentation suitable for your `README.md`, explaining **why** and **how** to configure the CloudWatch Agent to group metrics  by service name only (like `AnalyticsWorker`), avoiding clutter from individual container `host`, `fstype`, or `device` labels.
 
 ---
 
 ## ✅ Why This Setup Is Needed
 
-When running services across multiple ECS containers or EC2 instances, CloudWatch stores metrics with dimensions like:
+When running services across multiple ECS containers or EC2 instances, CloudWatch stores metrics  with dimensions like:
 
 * `host` (container ID or EC2 hostname)
 * `fstype` (e.g., `overlay`)
@@ -398,15 +398,15 @@ Create or update the following JSON config file and place it in your ECS contain
    
 ```json
 {
-  "metrics": {
+  "metrics ": {
     "namespace": "CWAgent/DiskSpaceService",
-    "metrics_collected": {
+    "metrics _collected": {
       "disk": {
         "measurement": [
           "disk_used",
           "disk_free"
         ],
-        "metrics_collection_interval": 30,
+        "metrics _collection_interval": 30,
         "resources": [
           "/"
         ],
@@ -466,7 +466,7 @@ Create or update the following JSON config file and place it in your ECS contain
 
 ## 📈 Result in CloudWatch
 
-After setup, your CloudWatch Metrics will be grouped under:
+After setup, your CloudWatch metrics  will be grouped under:
 
 ```
 Namespace: CWAgent/DiskSpaceService
@@ -484,7 +484,7 @@ No more per-host or per-container fragmentation!
 | ------------------------ | --------------------------------------------------------------------- |
 | `append_dimensions`      | Adds `ECSServiceName` to tag each metric with service name            |
 | `aggregation_dimensions` | Tells CloudWatch to **only group by ECSServiceName**, ignoring others |
-| `disk` metrics           | Collects storage data (`disk_used`, `disk_free`) from root filesystem |
+| `disk` metrics            | Collects storage data (`disk_used`, `disk_free`) from root filesystem |
 | Result                   | A unified view per ECS service, easier dashboards and alerts          |
 
 
