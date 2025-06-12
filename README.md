@@ -467,6 +467,8 @@ Save the configuration file in cloudwatch agent configuration setup, or reffer t
 /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a start
 ```
 
+</details>
+
 ---
 
 ## 📈 Result in CloudWatch
