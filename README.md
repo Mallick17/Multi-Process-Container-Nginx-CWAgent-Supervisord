@@ -350,7 +350,11 @@ Follow the same execution steps and File Structure. Check below to view the imag
 
 ---
 
-# Different Versions/Improvement of Deployment
+# 📊 CloudWatch Agent Configuration for ECS Metrics Aggregation
+- This guide explains how to configure the **Amazon CloudWatch Agent** to collect disk usage metrics (e.g., `disk_free`, `disk_used`) from ECS containers **and group them by service name only**, such as `AnalyticsWorker`.
+- By default, metrics are pushed with dimensions like `host`, `fstype`, and `device`, which makes it difficult to aggregate across instances. This setup removes those extra dimensions and ensures a **clean, single-line view per service** in CloudWatch.
+
+## Different Versions/Improvement of Deployment
 - We are running multiple instances and using the same configuration file and checking the metrices through console, the difference between all the versions and this version is
   - We are combining both the instances disk space used and disk space free in single metrices using **_aggregation_dimension_**
 ## Folder name which is present in this repo (_CWAgent-V5_)
@@ -360,14 +364,6 @@ Follow the same execution steps and File Structure.
 - Refresh the webpage and Check the Cloudwatch Console(Log Groups and Metrics) for the changes happened through CloudWatch Agent.
 
 Here is a complete Markdown documentation suitable for your `README.md`, explaining **why** and **how** to configure the CloudWatch Agent to group metrics by service name only (like `AnalyticsWorker`), avoiding clutter from individual container `host`, `fstype`, or `device` labels.
-
----
-
-# 📊 CloudWatch Agent Configuration for ECS Metrics Aggregation
-
-This guide explains how to configure the **Amazon CloudWatch Agent** to collect disk usage metrics (e.g., `disk_free`, `disk_used`) from ECS containers **and group them by service name only**, such as `AnalyticsWorker`.
-
-By default, metrics are pushed with dimensions like `host`, `fstype`, and `device`, which makes it difficult to aggregate across instances. This setup removes those extra dimensions and ensures a **clean, single-line view per service** in CloudWatch.
 
 ---
 
