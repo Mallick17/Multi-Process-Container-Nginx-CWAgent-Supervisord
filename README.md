@@ -495,7 +495,7 @@ No more per-host or per-container fragmentation!
 | Result                   | A unified view per ECS service, easier dashboards and alerts          |
 
 
-Check below to view the images for the cloudwatch based on the files and I have mentioned the Folder name here **_CWAgent-V5_** which is present in this repo.
+- Check below to view the images for the cloudwatch based on the files and I have mentioned the Folder name here **_CWAgent-V5_** which is present in this repo.
 
 <details>
    <summary>Click to view the changes happened in the CloudWatch based on the scripts and Configurations</summary>
@@ -503,6 +503,14 @@ Check below to view the images for the cloudwatch based on the files and I have 
 ---
 
 ![image](https://github.com/user-attachments/assets/2928cf9b-500f-4a53-8562-0f712cc82740)
+
+---
+
+![image](https://github.com/user-attachments/assets/75f03140-d3e7-4a4e-b171-34312f2af656)
+
+---
+
+![image](https://github.com/user-attachments/assets/3c6ff3ac-4d90-4d53-a479-ff9dba5695db)
 
 ---
 
