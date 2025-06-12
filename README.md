@@ -359,6 +359,139 @@ Follow the same execution steps and File Structure.
 - Follow the execution steps as mentioned in all the instances.
 - Refresh the webpage and Check the Cloudwatch Console(Log Groups and Metrics) for the changes happened through CloudWatch Agent.
 
+Here is a complete Markdown documentation suitable for your `README.md`, explaining **why** and **how** to configure the CloudWatch Agent to group metrics by service name only (like `AnalyticsWorker`), avoiding clutter from individual container `host`, `fstype`, or `device` labels.
+
+---
+
+# 📊 CloudWatch Agent Configuration for ECS Metrics Aggregation
+
+This guide explains how to configure the **Amazon CloudWatch Agent** to collect disk usage metrics (e.g., `disk_free`, `disk_used`) from ECS containers **and group them by service name only**, such as `AnalyticsWorker`.
+
+By default, metrics are pushed with dimensions like `host`, `fstype`, and `device`, which makes it difficult to aggregate across instances. This setup removes those extra dimensions and ensures a **clean, single-line view per service** in CloudWatch.
+
+---
+
+## ✅ Why This Setup Is Needed
+
+When running services across multiple ECS containers or EC2 instances, CloudWatch stores metrics with dimensions like:
+
+* `host` (container ID or EC2 hostname)
+* `fstype` (e.g., `overlay`)
+* `device` (e.g., `overlay`)
+
+This results in multiple separate metric lines for the same logical service, as shown in the default CloudWatch view:
+
+```
+AnalyticsWorker - overlay - host1 - /
+AnalyticsWorker - overlay - host2 - /
+...
+```
+
+### 🎯 Goal
+
+> Show **a single aggregated line** per service name (e.g., `AnalyticsWorker`) in the CloudWatch dashboard regardless of instance/container.
+
+---
+
+## 🛠️ Modified CloudWatch Agent Configuration
+
+Create or update the following JSON config file and place it in your ECS container or EC2 instance.
+
+<details>
+   <summary>Click to view the scripts and Configurations File of CloudWatch Agent Config File.</summary>
+   
+```json
+{
+  "metrics": {
+    "namespace": "CWAgent/DiskSpaceService",
+    "metrics_collected": {
+      "disk": {
+        "measurement": [
+          "disk_used",
+          "disk_free"
+        ],
+        "metrics_collection_interval": 30,
+        "resources": [
+          "/"
+        ],
+        "unit": "Megabytes",
+        "append_dimensions": {
+          "ECSServiceName": "AnalyticsWorker"
+        }
+      }
+    },
+    "aggregation_dimensions": [
+      ["ECSServiceName"]
+    ]
+  },
+  "logs": {
+    "logs_collected": {
+      "files": {
+        "collect_list": [
+          {
+            "file_path": "/var/log/nginx/access.log",
+            "log_group_name": "NginxLogGroup-mallick",
+            "log_stream_name": "mallick-nginxagent-mallow/access.log",
+            "timestamp_format": "[%d/%b/%Y:%H:%M:%S %z]"
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+</details>
+
+---
+
+## 🚀 Applying the Configuration
+
+1. **Save the configuration** to a file like `/opt/aws/amazon-cloudwatch-agent/etc/cloudwatch-config.json`.
+
+2. **Validate and apply it using the agent:**
+
+```bash
+/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+-a fetch-config \
+-m ec2 \
+-c file:/opt/aws/amazon-cloudwatch-agent/etc/cloudwatch-config.json \
+-s
+```
+
+3. **Restart the agent if needed:**
+
+```bash
+/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a stop
+/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a start
+```
+
+---
+
+## 📈 Result in CloudWatch
+
+After setup, your CloudWatch Metrics will be grouped under:
+
+```
+Namespace: CWAgent/DiskSpaceService
+Dimension: ECSServiceName = AnalyticsWorker
+Metric Names: disk_free, disk_used
+```
+
+No more per-host or per-container fragmentation!
+
+---
+
+## 🧼 Summary
+
+| Element                  | Purpose                                                               |
+| ------------------------ | --------------------------------------------------------------------- |
+| `append_dimensions`      | Adds `ECSServiceName` to tag each metric with service name            |
+| `aggregation_dimensions` | Tells CloudWatch to **only group by ECSServiceName**, ignoring others |
+| `disk` metrics           | Collects storage data (`disk_used`, `disk_free`) from root filesystem |
+| Result                   | A unified view per ECS service, easier dashboards and alerts          |
+
+
 Check below to view the images for the cloudwatch based on the files and I have mentioned the Folder name here **_CWAgent-V5_** which is present in this repo.
 
 <details>
